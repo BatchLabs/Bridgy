@@ -1,6 +1,6 @@
 # Bridgy
 
-Bridgy allow you to automatically generate Swift bridging headers by scanning folders on disk.
+Bridgy allows you to automatically generate Swift bridging headers by scanning folders on disk.
 This allows your developers to freely add and remove Objective-C headers without having to manually change the bridging headers.
 
 A good use case for this are bridging headers used in unit tests.
