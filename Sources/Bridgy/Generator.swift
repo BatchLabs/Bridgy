@@ -13,8 +13,16 @@ internal extension String {
     }
 }
 
+internal extension NSRegularExpression {
+    @inlinable
+    func matches(_ str: String) -> Bool {
+        return firstMatch(in: str, options: [], range: NSRange(str.startIndex..<str.endIndex, in: str)) != nil
+    }
+}
+
 public enum GeneratorError: Error {
     case configurationError
+    case invalidIgnoreRegexp
     case notAFolder
     case enumerationError
     case couldNotGetRealPath
@@ -74,7 +82,7 @@ public class Generator {
                         throw GeneratorError.couldNotGetRealPath
                     }
                     print("Scanning \(path)")
-                    let headersToInclude = try headerFilenames(atPath: path, scanRecursively: generatorConfig.recursive)
+                    let headersToInclude = try headerFilenames(atPath: path, scanRecursively: generatorConfig.recursive, ignoredNames: generatorConfig.ignoredNames)
                     bridgingHeaderContents[bridgingHeaderName] = self.makeBridgingHeaderContent(name: bridgingHeaderName, headers: headersToInclude)
                 }
             }
@@ -115,7 +123,18 @@ public class Generator {
     // Returns the header filenames for a given path
     // Only the filenames are returned because headers don't need to be referenced by path, only by filename
     // Can scan recursively
-    func headerFilenames(atPath path: String, scanRecursively: Bool) throws -> [String] {
+    func headerFilenames(atPath path: String, scanRecursively: Bool, ignoredNames: String?) throws -> [String] {
+        let ignoredNamesRegexp: NSRegularExpression?
+        if let ignoredNames = ignoredNames {
+            do {
+                ignoredNamesRegexp = try NSRegularExpression(pattern: ignoredNames, options: [])
+            } catch {
+                throw GeneratorError.invalidIgnoreRegexp
+            }
+        } else {
+            ignoredNamesRegexp = nil
+        }
+
         let fm = FileManager.default
         var isDir: ObjCBool = false
         if !fm.fileExists(atPath:path, isDirectory:&isDir) || !isDir.boolValue {
@@ -128,7 +147,7 @@ public class Generator {
         
         var results: [String] = []
         
-        while let filename = enumerator.nextObject() as? String {
+        while let filepath = enumerator.nextObject() as? String {
             if !scanRecursively {
                 enumerator.skipDescendents()
             }
@@ -138,11 +157,15 @@ public class Generator {
                 continue
             }
             
-            if filename.pathExtension.caseInsensitiveCompare("h") != .orderedSame {
+            if filepath.pathExtension.caseInsensitiveCompare("h") != .orderedSame {
                 continue
             }
-            
-            results.append((filename as NSString).lastPathComponent)
+
+            let filename = (filepath as NSString).lastPathComponent
+            if ignoredNamesRegexp?.matches(filename) ?? false {
+                continue
+            } 
+            results.append(filename)
         }
         
         return results
