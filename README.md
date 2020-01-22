@@ -21,7 +21,7 @@ Example configuration file:
 // Unless absolute, all paths are relative to the configuration json you provide to the bridgy CLI
 {
     "output_directory": "tests/Bridging Headers/", // Directory where the bridging headers will be generated
-    "base_search_path": "source/", // Base path for "path" keys in the "header" object. Works kind of a "base header search path"
+    "base_search_path": "source/", // Base path for "path" keys in the "header" object. Kinda works like a "base header search path"
     "headers": {
         "Login-Bridging.h": { // Output bridging header filename
             "path": "Login", // Path of the folder to scan
