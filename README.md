@@ -25,7 +25,8 @@ Example configuration file:
     "headers": {
         "Login-Bridging.h": { // Output bridging header filename
             "path": "Login", // Path of the folder to scan
-            "recursive": true // Recursively scan 
+            "recursive": true, // Recursively scan
+            "ignoredNames": "^Public.*" // Headers will be ignored if they match this regexp
         }
     }
 }
