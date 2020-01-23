@@ -15,7 +15,8 @@ public struct Config : Codable {
 public struct HeaderConfig : Codable {
     let path: String
     let recursive: Bool
-    let ignoredNames: String?
+    let ignoredNames: String? = nil
+    let ignoreSelf: Bool = true
 }
 
 internal func readConfigAtPath(path: String) -> Data? {
