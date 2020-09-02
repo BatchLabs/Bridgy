@@ -83,7 +83,7 @@ public class Generator {
                     }
                     print("Scanning \(path)")
                     let headersToInclude = try headerFilenames(atPath: path, scanRecursively: generatorConfig.recursive, ignoredNames: generatorConfig.ignoredNames)
-                    bridgingHeaderContents[bridgingHeaderName] = self.makeBridgingHeaderContent(name: bridgingHeaderName, headers: headersToInclude)
+                    bridgingHeaderContents[bridgingHeaderName] = self.makeBridgingHeaderContent(name: bridgingHeaderName, frameworkName: generatorConfig.frameworkName, headers: headersToInclude)
                 }
             }
         } catch {
@@ -171,14 +171,19 @@ public class Generator {
         return results
     }
     
-    func makeBridgingHeaderContent(name: String, headers: [String]) -> String {
+    func makeBridgingHeaderContent(name: String, frameworkName: String?, headers: [String]) -> String {
         var content = "//  \(name)\n" + bridgingHeaderPrefix
         
         for header in headers {
             if header == name {
                 continue
             }
-            content.append("#import \"\(header)\"\n")
+            
+            if let frameworkName = frameworkName {
+                content.append("#import <\(frameworkName)/\(header)>\n")
+            } else {
+                content.append("#import \"\(header)\"\n")
+            }
         }
         
         return content

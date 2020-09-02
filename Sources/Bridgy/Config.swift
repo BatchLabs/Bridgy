@@ -16,6 +16,7 @@ public struct HeaderConfig : Codable {
     let path: String
     let recursive: Bool
     let ignoredNames: String?
+    let frameworkName: String?
 }
 
 internal func readConfigAtPath(path: String) -> Data? {

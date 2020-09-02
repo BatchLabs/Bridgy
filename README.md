@@ -27,6 +27,7 @@ Example configuration file:
             "path": "Login", // Path of the folder to scan
             "recursive": true, // Recursively scan
             "ignoredNames": "^Public.*" // Headers will be ignored if they match this regexp, use null if you want to skip anything
+            "frameworkName": null // Set a framework name if your headers are part of a framework. A non null value will output <FrameworkName/Header.h> rather than "Header.h"
         }
     }
 }
