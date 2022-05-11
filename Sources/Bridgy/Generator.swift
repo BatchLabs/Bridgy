@@ -42,7 +42,6 @@ let bridgingHeaderPrefix = """
 """
 
 let bridgingHeaderSuffix = """
-
 // clang-format on
 """
 
